@@ -49,6 +49,10 @@ table {
 
 /* Defined styles start here */
 
+:root {
+    box-sizing: border-box;
+}
+
 html {
     display: flex;
     background-color: grey;
@@ -64,7 +68,23 @@ body {
 }
 
 .game-grid {
+    display: flex;
+    flex-direction: column;
     grid-column: 2 / 3;
     grid-row: 2 / 3;
-    background-color: lightcoral;
+    background-color: burlywood;
+}
+
+.game-grid > div {
+    display: flex;
+    flex: 1;
+}
+
+.game-grid > div > div {
+    flex: 1;
+    border: black solid 1px;
+}
+
+.game-grid > div > .tree-tile {
+    background-color: darkgreen;
 }
