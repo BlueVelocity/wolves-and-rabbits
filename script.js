@@ -2,8 +2,11 @@
 const toggleTreeBtn = document.getElementById('trees-toggle');
 const runSimulationBtn = document.getElementById('run-simulation');
 
-options = {
+let options = {
     treeGeneration: true,
+    gridSize: 20,
+    //This will not guarantee this number of trees, but is a close approx.
+    numberOfTrees: 50 
 }
 
 //Event listeners
@@ -28,17 +31,13 @@ function randomNumber(min, max) {
 }
 
 function generateTerrain() {
-    let gridSize = 20;
-    //This will not guarantee this number of trees, but is a close approx.
-    let numberOfTrees = 50;
-
     gridContainer = document.getElementById('grid-container');
 
     function generateTrees() {
         trees = []
-        for (i = 0; i < numberOfTrees; i++) {
-            let numX = Math.round(randomNumber(0, gridSize));
-            let numY = Math.round(randomNumber(0, gridSize));
+        for (i = 0; i < options.numberOfTrees; i++) {
+            let numX = Math.round(randomNumber(0, options.gridSize));
+            let numY = Math.round(randomNumber(0, options.gridSize));
             trees.push([numX, numY]);
         }
         return trees;
@@ -54,10 +53,10 @@ function generateTerrain() {
         tile.setAttribute('data-coordinate-y', `${y}`);
     }
 
-    for (y = 0; y < gridSize; y++) {
+    for (y = 0; y < options.gridSize; y++) {
         row = document.createElement('div');
         row.setAttribute('id', `rowNo${y}`);
-        for (x = 0; x < gridSize; x++) {
+        for (x = 0; x < options.gridSize; x++) {
             let isTreeTile = false;
             for (i = 0; i < trees.length; i++) {
                 if(x == trees[i][0] && y == trees[i][1]) {
