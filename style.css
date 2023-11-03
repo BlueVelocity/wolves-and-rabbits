@@ -50,13 +50,16 @@ table {
 /* Defined styles start here */
 
 :root {
+    --main-color: #78350f;
+    --secondary-color: #ea580c;
+    --box-shadow-std: black 5px 5px 10px;
     --game-grid-size: min(60vh, 80vw);
     box-sizing: border-box;
 }
 
 html {
     display: flex;
-    background-color: grey;
+    background-color: rgb(201, 201, 201);
     height: 100%;
     min-height: 500px;
     width: 100%;
@@ -71,14 +74,17 @@ body {
     row-gap: 20px;
 }
 
+body > * {
+    box-shadow: var(--box-shadow-std);
+}
+
 .game-grid {
     display: flex;
     flex-direction: column;
     grid-column: 2 / 3;
     grid-row: 2 / 3;
-    background-color: rgb(75, 182, 75);
+    background-color: var(--main-color);
     padding: 10px;
-    border: black 2px solid;
     border-radius: 10px;
 }
 
@@ -106,7 +112,7 @@ body {
     grid-template-rows: repeat(auto-fit, 1fr);
     gap: 10px;
     
-    background-color: lightblue;
+    background-color: var(--main-color);
     border-radius: 10px;
     padding: 5px;
 }
