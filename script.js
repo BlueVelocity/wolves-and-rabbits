@@ -23,7 +23,7 @@ function generateTerrain() {
 
     for (y = 0; y < gridSize; y++) {
         row = document.createElement('div')
-        row.setAttribute('id', `rowNo${i}`)
+        row.setAttribute('id', `rowNo${y}`)
         for (x = 0; x < gridSize; x++) {
             let isTreeTile = false
             for (i = 0; i < trees.length; i++) {
