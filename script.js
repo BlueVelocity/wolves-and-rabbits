@@ -79,8 +79,7 @@ function generateTerrain() {
 }
 
 function clearTerrain() {
-    gridContainer = document.getElementById('grid-container');
-    gridContainer.innerHTML = ''
+    document.getElementById('grid-container').innerHTML = '';
 }
 
 function runSimulation() {
