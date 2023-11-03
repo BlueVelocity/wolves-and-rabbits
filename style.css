@@ -50,22 +50,25 @@ table {
 /* Defined styles start here */
 
 :root {
-    --game-grid-size: min(70vh, 80vw);
+    --game-grid-size: min(60vh, 80vw);
     box-sizing: border-box;
 }
 
 html {
     display: flex;
     background-color: grey;
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
+    min-height: 500px;
+    width: 100%;
+    min-width: 400px;
 }
 
 body {
     flex: 1;
     display: grid;
-    grid-template-columns: 1fr var(--game-grid-size) 1fr;
-    grid-template-rows: 1fr var(--game-grid-size) 1fr;
+    grid-template-columns: 1fr max(300px, var(--game-grid-size)) 1fr;
+    grid-template-rows: 1fr max(300px, var(--game-grid-size)) 1fr 1fr;
+    row-gap: 20px;
 }
 
 .game-grid {
@@ -73,7 +76,7 @@ body {
     flex-direction: column;
     grid-column: 2 / 3;
     grid-row: 2 / 3;
-    background-color: green;
+    background-color: rgb(75, 182, 75);
     padding: 10px;
     border: black 2px solid;
     border-radius: 10px;
@@ -92,4 +95,18 @@ body {
 
 .game-grid > div > .tree-tile {
     background-color: darkgreen;
+}
+
+.options-field {
+    grid-column: 2 / 3;
+    grid-row: 3 / 4;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-rows: repeat(auto-fit, 1fr);
+    gap: 10px;
+    
+    background-color: lightblue;
+    border-radius: 10px;
+    padding: 5px;
 }
