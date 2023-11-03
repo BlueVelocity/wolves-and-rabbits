@@ -3,8 +3,9 @@ function randomNumber(min, max) {
 }
 
 function generateTerrain() {
-    let gridSize = 50
-    let numberOfTrees = 200
+    let gridSize = 20
+    //This will not guarantee this number of trees, but is a close approx.
+    let numberOfTrees = 50
 
     gridContainer = document.getElementById('grid-container')
 
@@ -17,8 +18,8 @@ function generateTerrain() {
         }
         return trees
     }
+
     trees = generateTrees()
-    console.log(trees)
 
     for (y = 0; y < gridSize; y++) {
         row = document.createElement('div')
