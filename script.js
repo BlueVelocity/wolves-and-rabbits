@@ -6,14 +6,55 @@ let options = {
     treeGeneration: true,
     gridSize: 20,
     //This will not guarantee this number of trees, but is a close approx.
-    numberOfTrees: 50 
+    numberOfTrees: 50,
+    numberOfWolves: 1,
+    numberOfRabbits: 1,
+}
+
+let animalData = {
+    animalIdCounter: 1,
+    wolves: [],
+    rabbits: [],
+    wolfColors: ['black', 'grey'],
+    rabbitColors: ['black', 'brown', 'grey', 'merle']
 }
 
 //Event listeners
 toggleTreeBtn.addEventListener('click', toggleOption);
-runSimulationBtn.addEventListener('click', runSimulation)
+runSimulationBtn.addEventListener('click', runSimulation);
 
+//constructors and classes
+function Animal(id, size, hunger, color) {
+    this.id = id;
+    this.size = size;
+    this.hunger = hunger;
+    this.color = color;
 
+    animalData.animalIdCounter++
+}
+
+Animal.prototype.information = function() {
+    console.log(`${this.id} is ${this.color}, ${this.size} units big and has ${this.hunger} hunger`);
+}
+
+function Wolf() {
+    color = animalData.wolfColors[(randomInt(0, animalData.wolfColors.length))]
+    Animal.call(this, id = `wolf_${animalData.animalIdCounter}`, size = randomInt(2, 7), hunger = randomInt(0, 3), color);
+}
+
+Object.setPrototypeOf(Wolf.prototype, Animal.prototype)
+
+function Rabbit() {
+    color = animalData.rabbitColors[(randomInt(0, animalData.rabbitColors.length))]
+    Animal.call(this, id = `rabbit_${animalData.animalIdCounter}`, size = randomInt(1, 3), hunger = randomInt(0, 3), color);
+}
+
+Object.setPrototypeOf(Rabbit.prototype, Animal.prototype)
+
+//functions
+
+//toggles an option in the options object from true to false or vice versa
+//reads the option to change from the DOM object 'data-jsFunction' attribute
 function toggleOption() {
     if (options[`${this.getAttribute('data-jsFunction')}`] === true) {
         options[`${this.getAttribute('data-jsFunction')}`] = false;
@@ -26,8 +67,12 @@ function toggleOption() {
     }
 }
 
-function randomNumber(min, max) {
+function randomFloat(min, max) {
     return Math.random() * (max - min) + min;
+}
+
+function randomInt(min, max) {
+    return Math.round(randomFloat(min, max));
 }
 
 function generateTerrain() {
@@ -36,8 +81,8 @@ function generateTerrain() {
     function generateTrees() {
         trees = []
         for (i = 0; i < options.numberOfTrees; i++) {
-            let numX = Math.round(randomNumber(0, options.gridSize));
-            let numY = Math.round(randomNumber(0, options.gridSize));
+            let numX = Math.round(randomFloat(0, options.gridSize));
+            let numY = Math.round(randomFloat(0, options.gridSize));
             trees.push([numX, numY]);
         }
         return trees;
@@ -80,6 +125,14 @@ function generateTerrain() {
 
 function clearTerrain() {
     document.getElementById('grid-container').innerHTML = '';
+}
+
+function generateRabbit() {
+    animalData.rabbits.push(new Rabbit());
+}
+
+function generateWolf() {
+    animalData.wolves.push(new Wolf());
 }
 
 function runSimulation() {
