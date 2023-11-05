@@ -23,6 +23,13 @@ let animalData = {
 
 //Event listeners
 toggleTreeBtn.addEventListener('click', toggleOption);
+toggleTreeBtn.addEventListener('click', function() {
+    if (toggleTreeBtn.getAttribute('style') != 'background-color: grey;') {
+        toggleTreeBtn.setAttribute('style', 'background-color: grey;')
+    } else {
+        toggleTreeBtn.setAttribute('style', '')
+    }
+});
 randomizeTerrainBtn.addEventListener('click', runSimulation);
 
 //constructors and classes
