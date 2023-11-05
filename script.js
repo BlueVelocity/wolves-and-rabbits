@@ -1,5 +1,7 @@
 //DOM object capture
 const toggleTreeBtn = document.getElementById('trees-toggle');
+const randomizeTerrainBtn = document.getElementById('randomize-terrain')
+const randomizeAnimalsBtn = document.getElementById('randomize-animals')
 const runSimulationBtn = document.getElementById('run-simulation');
 
 let options = {
@@ -21,7 +23,7 @@ let animalData = {
 
 //Event listeners
 toggleTreeBtn.addEventListener('click', toggleOption);
-runSimulationBtn.addEventListener('click', runSimulation);
+randomizeTerrainBtn.addEventListener('click', runSimulation);
 
 //constructors and classes
 function Animal(id, size, hunger, color) {
