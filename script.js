@@ -31,14 +31,7 @@ const boardOccupation = {
 }
 
 //Event listeners
-toggleTreeBtn.addEventListener('click', toggleOption);
-toggleTreeBtn.addEventListener('click', function() {
-    if (toggleTreeBtn.getAttribute('style') != 'background-color: grey;') {
-        toggleTreeBtn.setAttribute('style', 'background-color: grey;');
-    } else {
-        toggleTreeBtn.setAttribute('style', '');
-    }
-});
+toggleTreeBtn.addEventListener('click', toggleTreeGeneration);
 
 randomizeTreesBtn.addEventListener('click', randomizeTrees);
 
@@ -70,8 +63,6 @@ function Rabbit() {
 
 Object.setPrototypeOf(Rabbit.prototype, Animal.prototype);
 
-//functions
-
 //animal generation and handling functions
 function generateRabbit() {
     animalData.rabbitData.rabbits.push(new Rabbit());
@@ -83,20 +74,6 @@ function generateWolf() {
 
 //general functions
 
-//toggles an option in the options object from true to false or vice versa
-//reads the option to change from the DOM object 'data-jsFunction' attribute
-function toggleOption() {
-    if (options[`${this.getAttribute('data-jsFunction')}`] === true) {
-        options[`${this.getAttribute('data-jsFunction')}`] = false;
-        console.log(options[`${this.getAttribute('data-jsFunction')}`]);
-    } else if (options[`${this.getAttribute('data-jsFunction')}`] === false) {
-        options[`${this.getAttribute('data-jsFunction')}`]= true;
-        console.log(options[`${this.getAttribute('data-jsFunction')}`]);
-    } else {
-        console.log(`ToggleError: ${options[`${this.getAttribute('data-jsFunction')}`]}`);
-    }
-}
-
 function randomFloat(min, max) {
     return Math.random() * (max - min) + min;
 }
@@ -106,6 +83,21 @@ function randomInt(min, max) {
 }
 
 //tile generation and handling functions
+function toggleTreeGeneration() {
+    if (options.treeGeneration === true) {
+        options.treeGeneration = false;
+        toggleTreeBtn.setAttribute('style', 'background-color: lightgrey;');
+        randomizeTreesBtn.setAttribute('style', 'background-color: lightgrey;');
+        randomizeTreesBtn.disabled = true;
+    } else {
+        options.treeGeneration = true
+        toggleTreeBtn.setAttribute('style', '');
+        randomizeTreesBtn.setAttribute('style', '');
+        randomizeTreesBtn.disabled = false;
+    }
+    constructBoardInDOM()
+}
+
 function generateTrees() {
     for (i = 0; i < options.numberOfTrees; i++) {
         let spaceOccupied = true;
