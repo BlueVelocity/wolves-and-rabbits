@@ -35,6 +35,8 @@ toggleTreeBtn.addEventListener('click', toggleTreeGeneration);
 
 randomizeTreesBtn.addEventListener('click', randomizeTrees);
 
+randomizeAnimalsBtn.addEventListener('click', randomizeAnimals);
+
 //constructors and classes
 function Animal(id, size, hunger, color) {
     this.id = id;
@@ -64,16 +66,47 @@ function Rabbit() {
 Object.setPrototypeOf(Rabbit.prototype, Animal.prototype);
 
 //animal generation and handling functions
-function generateRabbit() {
+function generateRabbits() {
     animalData.rabbitData.rabbits.push(new Rabbit());
+    for (i = 0; i < options.numberOfRabbits; i++) {
+        let spaceOccupied = true;
+        while (spaceOccupied === true) {
+            let numX = Math.round(randomFloat(0, (options.gridSize - 1)));
+            let numY = Math.round(randomFloat(0, (options.gridSize - 1)));
+            if (checkIfSpaceIsOccupied(numX, numY)) {
+                boardOccupation.rabbitOccupation.push([numX, numY]);
+                spaceOccupied = false;
+            }
+        }
+    }
 }
 
-function generateWolf() {
+function generateWolves() {
     animalData.wolfData.wolves.push(new Wolf());
+    for (i = 0; i < options.numberOfWolves; i++) {
+        let spaceOccupied = true;
+        while (spaceOccupied === true) {
+            let numX = Math.round(randomFloat(0, (options.gridSize - 1)));
+            let numY = Math.round(randomFloat(0, (options.gridSize - 1)));
+            if (checkIfSpaceIsOccupied(numX, numY)) {
+                boardOccupation.wolfOccupation.push([numX, numY]);
+                spaceOccupied = false;
+            }
+        }
+    }
+}
+
+function checkIfSpaceIsOccupied(numX, numY) {
+    if (!boardOccupation.treeOccupation.some(([x, y]) => x === numX && y === numY)
+        && !boardOccupation.wolfOccupation.some(([x, y]) => x === numX && y === numY)
+        && !boardOccupation.rabbitOccupation.some(([x, y]) => x === numX && y === numY)) {
+            return true
+        } else {
+            return false
+        }
 }
 
 //general functions
-
 function randomFloat(min, max) {
     return Math.random() * (max - min) + min;
 }
@@ -104,7 +137,7 @@ function generateTrees() {
         while (spaceOccupied === true) {
             let numX = Math.round(randomFloat(0, (options.gridSize - 1)));
             let numY = Math.round(randomFloat(0, (options.gridSize - 1)));
-            if (!boardOccupation.treeOccupation.some(([x, y]) => x === numX && y === numY)) {
+            if (checkIfSpaceIsOccupied(numX, numY)) {
                 boardOccupation.treeOccupation.push([numX, numY]);
                 spaceOccupied = false;
             }
@@ -130,6 +163,16 @@ function constructBoardInDOM() {
                 treeTile.setAttribute('class', 'tree-tile');
                 assignCoordinates(treeTile, x, y);
                 row.appendChild(treeTile);
+            } else if (boardOccupation.wolfOccupation.some(([wolfX, wolfY]) => wolfX === x && wolfY === y)) {    
+                let wolfTile = document.createElement('div');
+                wolfTile.setAttribute('class', 'wolf-tile');
+                assignCoordinates(wolfTile, x, y);
+                row.appendChild(wolfTile);
+            } else if (boardOccupation.rabbitOccupation.some(([rabbitX, rabbitY]) => rabbitX === x && rabbitY === y)) {    
+                let rabbitTile = document.createElement('div');
+                rabbitTile.setAttribute('class', 'rabbit-tile');
+                assignCoordinates(rabbitTile, x, y);
+                row.appendChild(rabbitTile);
             } else {
                 let emptyTile = document.createElement('div');
                 assignCoordinates(emptyTile, x, y);
@@ -141,7 +184,12 @@ function constructBoardInDOM() {
 }
 
 function clearTreeMemory() {
-    boardOccupation.treeOccupation = []
+    boardOccupation.treeOccupation = [];
+}
+
+function clearAnimalMemory() {
+    boardOccupation.wolfOccupation = [];
+    boardOccupation.rabbitOccupation = [];
 }
 
 function clearBoardInDOM() {
@@ -151,5 +199,12 @@ function clearBoardInDOM() {
 function randomizeTrees() {
     clearTreeMemory();
     generateTrees();
+    constructBoardInDOM();
+}
+
+function randomizeAnimals() {
+    clearAnimalMemory();
+    generateRabbits();
+    generateWolves();
     constructBoardInDOM();
 }

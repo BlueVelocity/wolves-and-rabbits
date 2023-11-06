@@ -103,6 +103,15 @@ body > * {
     background-color: darkgreen;
 }
 
+.game-grid > div > .wolf-tile {
+    background-color: black;
+}
+
+.game-grid > div > .rabbit-tile {
+    background-color: lightgray;
+    display: flex;
+}
+
 .options-field {
     grid-column: 2 / 3;
     grid-row: 3 / 4;
