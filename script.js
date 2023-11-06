@@ -15,10 +15,14 @@ let options = {
 
 let animalData = {
     animalIdCounter: 1,
-    wolves: [],
-    rabbits: [],
-    wolfColors: ['black', 'grey'],
-    rabbitColors: ['black', 'brown', 'grey', 'merle']
+    wolfData: {
+        wolves: [],
+        colors: ['black', 'grey'],
+    },
+    rabbitData: {
+        rabbits: [],
+        colors: ['black', 'brown', 'grey', 'merle']
+    }
 }
 
 //Event listeners
@@ -47,15 +51,15 @@ Animal.prototype.information = function() {
 }
 
 function Wolf() {
-    color = animalData.wolfColors[(randomInt(0, animalData.wolfColors.length))]
-    Animal.call(this, id = `wolf_${animalData.animalIdCounter}`, size = randomInt(2, 7), hunger = randomInt(0, 3), color);
+    color = animalData.wolfData.colors[(randomInt(0, (animalData.wolfData.colors.length - 1)))]
+    Animal.call(this, id = `wolf_${animalData.animalIdCounter}`, size = randomInt(2, 7), hunger = 3, color);
 }
 
 Object.setPrototypeOf(Wolf.prototype, Animal.prototype)
 
 function Rabbit() {
-    color = animalData.rabbitColors[(randomInt(0, animalData.rabbitColors.length))]
-    Animal.call(this, id = `rabbit_${animalData.animalIdCounter}`, size = randomInt(1, 3), hunger = randomInt(0, 3), color);
+    color = animalData.rabbitData.colors[(randomInt(0, (animalData.rabbitData.colors.length - 1)))]
+    Animal.call(this, id = `rabbit_${animalData.animalIdCounter}`, size = randomInt(1, 3), hunger = 3, color);
 }
 
 Object.setPrototypeOf(Rabbit.prototype, Animal.prototype)
@@ -137,14 +141,20 @@ function clearTerrain() {
 }
 
 function generateRabbit() {
-    animalData.rabbits.push(new Rabbit());
+    animalData.rabbitData.rabbits.push(new Rabbit());
 }
 
 function generateWolf() {
-    animalData.wolves.push(new Wolf());
+    animalData.wolfData.wolves.push(new Wolf());
 }
 
 function runSimulation() {
     clearTerrain();
     generateTerrain();
 }
+
+for (i = 0; i < 20; i++) {
+    generateRabbit()
+}
+
+console.log(animalData.rabbitData.rabbits)
