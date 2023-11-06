@@ -6,9 +6,8 @@ const runSimulationBtn = document.getElementById('run-simulation');
 
 let options = {
     treeGeneration: true,
-    gridSize: 20,
-    //This will not guarantee this number of trees, but is a close approx.
-    numberOfTrees: 50,
+    gridSize: 10,
+    numberOfTrees: 5,
     numberOfWolves: 1,
     numberOfRabbits: 1,
 }
@@ -25,6 +24,12 @@ let animalData = {
     }
 }
 
+let boardOccupation = {
+    treeOccupation: [],
+    wolfOccupation: [],
+    rabbitOccupation: []
+}
+
 //Event listeners
 toggleTreeBtn.addEventListener('click', toggleOption);
 toggleTreeBtn.addEventListener('click', function() {
@@ -34,7 +39,7 @@ toggleTreeBtn.addEventListener('click', function() {
         toggleTreeBtn.setAttribute('style', '')
     }
 });
-randomizeTerrainBtn.addEventListener('click', runSimulation);
+randomizeTerrainBtn.addEventListener('click', randomizeTerrain);
 
 //constructors and classes
 function Animal(id, size, hunger, color) {
@@ -92,18 +97,24 @@ function generateTerrain() {
     gridContainer = document.getElementById('grid-container');
 
     function generateTrees() {
-        trees = []
+        clearTreeMemory()
         for (i = 0; i < options.numberOfTrees; i++) {
-            let numX = Math.round(randomFloat(0, options.gridSize));
-            let numY = Math.round(randomFloat(0, options.gridSize));
-            trees.push([numX, numY]);
+            let spaceOccupied = true;
+            while (spaceOccupied === true) {
+                let numX = Math.round(randomFloat(0, (options.gridSize - 1)));
+                let numY = Math.round(randomFloat(0, (options.gridSize - 1)));
+                if (!boardOccupation.treeOccupation.some(([x, y]) => x === numX && y === numY)) {
+                    boardOccupation.treeOccupation.push([numX, numY]);
+                    spaceOccupied = false;
+                }
+            }
         }
-        return trees;
     }
 
-    trees = [];
-    if (options.treeGeneration === true) {
-        trees = generateTrees();
+    if (options.treeGeneration) {
+        generateTrees();
+    } else {
+        clearTreeMemory()
     }
 
     function assignCoordinates(tile, x, y) {
@@ -113,15 +124,8 @@ function generateTerrain() {
 
     for (y = 0; y < options.gridSize; y++) {
         row = document.createElement('div');
-        row.setAttribute('id', `rowNo${y}`);
         for (x = 0; x < options.gridSize; x++) {
-            let isTreeTile = false;
-            for (i = 0; i < trees.length; i++) {
-                if(x == trees[i][0] && y == trees[i][1]) {
-                    isTreeTile = true;
-                }
-            }
-            if (isTreeTile == true) {
+            if (boardOccupation.treeOccupation.some(([treeX, treeY]) => treeX === x && treeY === y)) {
                 let treeTile = document.createElement('div');
                 treeTile.setAttribute('class', 'tree-tile');
                 assignCoordinates(treeTile, x, y);
@@ -136,6 +140,10 @@ function generateTerrain() {
     }
 }
 
+function clearTreeMemory() {
+    boardOccupation.treeOccupation = []
+}
+
 function clearTerrain() {
     document.getElementById('grid-container').innerHTML = '';
 }
@@ -148,13 +156,7 @@ function generateWolf() {
     animalData.wolfData.wolves.push(new Wolf());
 }
 
-function runSimulation() {
+function randomizeTerrain() {
     clearTerrain();
     generateTerrain();
 }
-
-for (i = 0; i < 20; i++) {
-    generateRabbit()
-}
-
-console.log(animalData.rabbitData.rabbits)
