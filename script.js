@@ -37,6 +37,8 @@ randomizeTreesBtn.addEventListener('click', randomizeTrees);
 
 randomizeAnimalsBtn.addEventListener('click', randomizeAnimals);
 
+runSimulationBtn.addEventListener('click', runSimulation)
+
 //constructors and classes
 function Animal(id, size, hunger, color) {
     this.id = id;
@@ -96,6 +98,22 @@ function generateWolves() {
     }
 }
 
+function clearTreeMemory() {
+    boardOccupation.treeOccupation = [];
+}
+
+function clearAnimalMemory() {
+    boardOccupation.wolfOccupation = [];
+    boardOccupation.rabbitOccupation = [];
+}
+
+function randomizeAnimals() {
+    clearAnimalMemory();
+    generateRabbits();
+    generateWolves();
+    constructBoardInDOM();
+}
+
 function checkIfSpaceIsOccupied(numX, numY) {
     if (!boardOccupation.treeOccupation.some(([x, y]) => x === numX && y === numY)
         && !boardOccupation.wolfOccupation.some(([x, y]) => x === numX && y === numY)
@@ -145,6 +163,12 @@ function generateTrees() {
     }
 }
 
+function randomizeTrees() {
+    clearTreeMemory();
+    generateTrees();
+    constructBoardInDOM();
+}
+
 function constructBoardInDOM() {
     gridContainer = document.getElementById('grid-container');
 
@@ -183,28 +207,6 @@ function constructBoardInDOM() {
     }
 }
 
-function clearTreeMemory() {
-    boardOccupation.treeOccupation = [];
-}
-
-function clearAnimalMemory() {
-    boardOccupation.wolfOccupation = [];
-    boardOccupation.rabbitOccupation = [];
-}
-
 function clearBoardInDOM() {
     document.getElementById('grid-container').innerHTML = '';
-}
-
-function randomizeTrees() {
-    clearTreeMemory();
-    generateTrees();
-    constructBoardInDOM();
-}
-
-function randomizeAnimals() {
-    clearAnimalMemory();
-    generateRabbits();
-    generateWolves();
-    constructBoardInDOM();
 }
