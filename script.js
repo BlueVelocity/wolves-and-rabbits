@@ -7,7 +7,7 @@ const runSimulationBtn = document.getElementById('run-simulation');
 const options = {
     treeGeneration: true,
     gridSize: 5,
-    numberOfTrees: 4,
+    numberOfTrees: 8,
     numberOfWolves: 1,
     numberOfRabbits: 4,
 }
@@ -52,6 +52,7 @@ function Animal(id, size, hunger, color, posX, posY) {
     this.coordinates = [posX, posY];
     this.originalCoordinates = [posX, posY];
     this.previousCalculatedCoordinates = [[posX, posY]];
+    this.currentTarget = null;
 
     animalData.animalIdCounter++;
 }
@@ -64,7 +65,6 @@ Animal.prototype.information = function() {
 Animal.prototype.eat = function(targetObject) {
     console.log(`${this.id} just ate ${targetObject.id}!`)
     this.endChase();
-    this.coordinates = targetObject.coordinates
     targetObject.die();
 }
 
@@ -79,13 +79,12 @@ Animal.prototype.chase = function(targetObject) {
     //g(n) is cost so far to reach node n  
     //h(n) is estimated cost from n to goal. Use Manhattan Distance Heuristic
 
-    //calculates adjacent tiles that can be moved to
     let targetCoordinates = targetObject.coordinates;
     const startingCoordinates = this.originalCoordinates;
     const previousCoordinates = this.coordinates;
-    // const openArray = [[this.coordinates, 0]];
-    // const closedArray = [];
     
+
+
     const updateLocation = (currentCoordinate) => {
         bestTile = calculateNextBestTile(currentCoordinate);
         this.coordinates = bestTile;
@@ -104,7 +103,11 @@ Animal.prototype.chase = function(targetObject) {
     }
 
     const calculateNextBestTile = (currentCoordinate) => {
-        const validTilesWithFValues = calculateValidAdjacentTiles(currentCoordinate);
+        let validTilesWithFValues = calculateValidAdjacentTiles(currentCoordinate);
+        if (validTilesWithFValues.length === 0) {
+            this.previousCalculatedCoordinates = []
+            validTilesWithFValues = calculateValidAdjacentTiles(currentCoordinate)
+        }
         let closestTile = validTilesWithFValues[0];
         for (let i = 0; i < validTilesWithFValues.length; i++) {
             if (validTilesWithFValues[i][1] < closestTile[1]) {
@@ -114,21 +117,29 @@ Animal.prototype.chase = function(targetObject) {
         return closestTile[0];
     }
 
-    const calculateValidAdjacentTiles = (coordinate) => {
-        upLeft = [(coordinate[0] - 1), (coordinate[1] + 1)];
-        upMiddle = [(coordinate[0]), (coordinate[1] + 1)];
-        upRight = [(coordinate[0] + 1), (coordinate[1] + 1)];
-        left = [(coordinate[0] - 1), (coordinate[1])];
-        right = [(coordinate[0] + 1), (coordinate[1])];
-        downLeft = [(coordinate[0] - 1), (coordinate[1] - 1)];
-        downMiddle = [(coordinate[0]), (coordinate[1] - 1)];
-        downRight = [(coordinate[0] + 1), (coordinate[1] - 1)];
+    repeatCounter = 0
+    const calculateValidAdjacentTiles = (coordinates) => {
+        repeatCounter++
+        if (repeatCounter > 2) {
+            throw Error
+        }
+
+        upLeft = [(coordinates[0] - 1), (coordinates[1] + 1)];
+        upMiddle = [(coordinates[0]), (coordinates[1] + 1)];
+        upRight = [(coordinates[0] + 1), (coordinates[1] + 1)];
+        left = [(coordinates[0] - 1), (coordinates[1])];
+        right = [(coordinates[0] + 1), (coordinates[1])];
+        downLeft = [(coordinates[0] - 1), (coordinates[1] - 1)];
+        downMiddle = [(coordinates[0]), (coordinates[1] - 1)];
+        downRight = [(coordinates[0] + 1), (coordinates[1] - 1)];
+
         let adjacentTiles = [upLeft, upMiddle, upRight, left, right, downLeft, downMiddle, downRight];
         let availableSpaces = [];
 
         for (let i = 0; i < adjacentTiles.length; i++) {
             if (checkIfAdjacentTileIsTarget(adjacentTiles[i][0], adjacentTiles[i][1])) {
-                availableSpaces = [[adjacentTiles[i][0], adjacentTiles[i][1]]];
+                availableSpaces = [];
+                availableSpaces.push(adjacentTiles[i]);
                 this.eat(targetObject);
                 break
             } else if (checkIfSpaceIsOccupied(adjacentTiles[i][0], adjacentTiles[i][1])
@@ -137,15 +148,17 @@ Animal.prototype.chase = function(targetObject) {
                 this.previousCalculatedCoordinates.push(adjacentTiles[i]);
             }
         }
+
         availableSpaces.forEach(function(part, index, array) {
             array[index] = [part, calculateFScore(part)];
         });
+
         return availableSpaces;
     }
 
     function checkIfAdjacentTileIsTarget(numX, numY) {
         if (numX === targetCoordinates[0] && numY == targetCoordinates[1]) {
-            return true
+            return true;
         }
     }
 
@@ -227,10 +240,6 @@ function generateWolves() {
     }
 }
 
-function clearTreeMemory() {
-    boardOccupationData.treeOccupation = [];
-}
-
 function clearAnimalMemory() {
     animalData.wolfData.wolves = [];
     animalData.rabbitData.rabbits = [];
@@ -299,6 +308,10 @@ function randomizeTrees() {
     clearTreeMemory();
     generateTrees();
     constructBoardInDOM();
+}
+
+function clearTreeMemory() {
+    boardOccupationData.treeOccupation = [];
 }
 
 function constructBoardInDOM() {
