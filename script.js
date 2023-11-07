@@ -31,12 +31,17 @@ const boardOccupationData = {
     rabbitOccupation: [],
 }
 
+//on load
+constructBoardInDOM()
+
 //Event listeners
 toggleTreeBtn.addEventListener('click', toggleTreeGeneration);
 
 randomizeTreesBtn.addEventListener('click', randomizeTrees);
 
 randomizeAnimalsBtn.addEventListener('click', randomizeAnimals);
+
+runSimulationBtn.addEventListener('click', runSimulation);
 
 //constructors and classes
 function Animal(id, size, hunger, color, posX, posY) {
@@ -55,9 +60,11 @@ Animal.prototype.information = function() {
     console.log(`${this.id} is ${this.color}, ${this.size} units big and has ${this.hunger} hunger`);
 }
 
+
 Animal.prototype.eat = function(targetObject) {
     console.log(`${this.id} just ate ${targetObject.id}!`)
     this.endChase();
+    this.coordinates = targetObject.coordinates
     targetObject.die();
 }
 
@@ -344,4 +351,28 @@ function generateUnoccupiedTiles() {
             }
         }
     }
+}
+
+function disableButtons() {
+    toggleTreeBtn.disabled = true;
+    randomizeTreesBtn.disabled = true;
+    randomizeAnimalsBtn.disabled = true;
+    runSimulationBtn .disabled = true;
+}
+
+function enableButtons() {
+    toggleTreeBtn.disabled = false;
+    randomizeTreesBtn.disabled = false;
+    randomizeAnimalsBtn.disabled = false;
+    runSimulationBtn .disabled = false;
+}
+
+async function runSimulation() {
+    disableButtons();
+    while (animalData.rabbitData.rabbits.length !== 0 && animalData.wolfData.wolves.length !== 0) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        animalData.wolfData.wolves[0].chase(animalData.rabbitData.rabbits[0]);
+        constructBoardInDOM();
+    }
+    enableButtons();
 }
