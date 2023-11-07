@@ -40,11 +40,12 @@ randomizeAnimalsBtn.addEventListener('click', randomizeAnimals);
 runSimulationBtn.addEventListener('click', runSimulation)
 
 //constructors and classes
-function Animal(id, size, hunger, color) {
+function Animal(id, size, hunger, color, posX, posY) {
     this.id = id;
     this.size = size;
     this.hunger = hunger;
     this.color = color;
+    this.coordinates = [posX, posY];
 
     animalData.animalIdCounter++;
 }
@@ -53,48 +54,56 @@ Animal.prototype.information = function() {
     console.log(`${this.id} is ${this.color}, ${this.size} units big and has ${this.hunger} hunger`);
 }
 
-function Wolf() {
+function Wolf(posX, posY) {
     color = animalData.wolfData.colors[(randomInt(0, (animalData.wolfData.colors.length - 1)))]
-    Animal.call(this, id = `wolf_${animalData.animalIdCounter}`, size = randomInt(2, 7), hunger = 3, color);
+    Animal.call(this, id = `wolf_${animalData.animalIdCounter}`, size = randomInt(2, 7), hunger = 3, color, posX, posY);
 }
 
 Object.setPrototypeOf(Wolf.prototype, Animal.prototype);
 
-function Rabbit() {
+Wolf.prototype.findClosestRabbit = function() {
+
+}
+
+function Rabbit(posX, posY) {
     color = animalData.rabbitData.colors[(randomInt(0, (animalData.rabbitData.colors.length - 1)))]
-    Animal.call(this, id = `rabbit_${animalData.animalIdCounter}`, size = randomInt(1, 3), hunger = 3, color);
+    Animal.call(this, id = `rabbit_${animalData.animalIdCounter}`, size = randomInt(1, 3), hunger = 3, color, posX, posY);
 }
 
 Object.setPrototypeOf(Rabbit.prototype, Animal.prototype);
 
 //animal generation and handling functions
 function generateRabbits() {
-    animalData.rabbitData.rabbits.push(new Rabbit());
     for (i = 0; i < options.numberOfRabbits; i++) {
         let spaceOccupied = true;
+        let posX = null;
+        let posY = null;
         while (spaceOccupied === true) {
-            let numX = Math.round(randomFloat(0, (options.gridSize - 1)));
-            let numY = Math.round(randomFloat(0, (options.gridSize - 1)));
-            if (checkIfSpaceIsOccupied(numX, numY)) {
-                boardOccupation.rabbitOccupation.push([numX, numY]);
+            posX = Math.round(randomFloat(0, (options.gridSize - 1)));
+            posY = Math.round(randomFloat(0, (options.gridSize - 1)));
+            if (checkIfSpaceIsOccupied(posX, posY)) {
+                boardOccupation.rabbitOccupation.push([posX, posY]);
                 spaceOccupied = false;
             }
         }
+        animalData.rabbitData.rabbits.push(new Rabbit(posX, posY));
     }
 }
 
 function generateWolves() {
-    animalData.wolfData.wolves.push(new Wolf());
     for (i = 0; i < options.numberOfWolves; i++) {
         let spaceOccupied = true;
+        let posX = null;
+        let posY = null;
         while (spaceOccupied === true) {
-            let numX = Math.round(randomFloat(0, (options.gridSize - 1)));
-            let numY = Math.round(randomFloat(0, (options.gridSize - 1)));
-            if (checkIfSpaceIsOccupied(numX, numY)) {
-                boardOccupation.wolfOccupation.push([numX, numY]);
+            posX = Math.round(randomFloat(0, (options.gridSize - 1)));
+            posY = Math.round(randomFloat(0, (options.gridSize - 1)));
+            if (checkIfSpaceIsOccupied(posX, posY)) {
+                boardOccupation.wolfOccupation.push([posX, posY]);
                 spaceOccupied = false;
             }
         }
+        animalData.wolfData.wolves.push(new Wolf(posX, posY));
     }
 }
 
