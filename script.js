@@ -6,10 +6,10 @@ const runSimulationBtn = document.getElementById('run-simulation');
 
 const options = {
     treeGeneration: true,
-    gridSize: 10,
+    gridSize: 5,
     numberOfTrees: 4,
     numberOfWolves: 1,
-    numberOfRabbits: 1,
+    numberOfRabbits: 4,
 }
 
 const animalData = {
@@ -53,6 +53,17 @@ function Animal(id, size, hunger, color, posX, posY) {
 
 Animal.prototype.information = function() {
     console.log(`${this.id} is ${this.color}, ${this.size} units big and has ${this.hunger} hunger`);
+}
+
+Animal.prototype.eat = function(targetObject) {
+    console.log(`${this.id} just ate ${targetObject.id}!`)
+    this.endChase();
+    targetObject.die();
+}
+
+Animal.prototype.endChase = function() {
+    this.originalCoordinates = this.coordinates;
+    this.previousCalculatedCoordinates = [this.coordinates];
 }
 
 Animal.prototype.chase = function(targetObject) {
@@ -111,8 +122,7 @@ Animal.prototype.chase = function(targetObject) {
         for (let i = 0; i < adjacentTiles.length; i++) {
             if (checkIfAdjacentTileIsTarget(adjacentTiles[i][0], adjacentTiles[i][1])) {
                 availableSpaces = [[adjacentTiles[i][0], adjacentTiles[i][1]]];
-                this.previousCalculatedCoordinates = [[adjacentTiles[i][0], adjacentTiles[i][1]]];
-                console.log(availableSpaces)
+                this.eat(targetObject);
                 break
             } else if (checkIfSpaceIsOccupied(adjacentTiles[i][0], adjacentTiles[i][1])
                 && !this.previousCalculatedCoordinates.some(([x, y]) => x === adjacentTiles[i][0] && y === adjacentTiles[i][1])) {
@@ -160,7 +170,20 @@ function Rabbit(posX, posY) {
     Animal.call(this, `rabbit_${animalData.animalIdCounter}`, randomInt(1, 3), 3, color, posX, posY);
 }
 
-// Object.setPrototypeOf(Rabbit.prototype, Animal.prototype);
+Object.setPrototypeOf(Rabbit.prototype, Animal.prototype);
+
+Rabbit.prototype.die = function() {
+    index = animalData.rabbitData.rabbits.findIndex(x => x.id === this.id);
+    console.log(`${this.id} has perished`)
+    for (let i = 0; i < boardOccupationData.rabbitOccupation.length; i++) {
+        if (boardOccupationData.rabbitOccupation[i][0] === this.coordinates[0] 
+            && boardOccupationData.rabbitOccupation[i][1] === this.coordinates[1]) {
+                boardOccupationData.rabbitOccupation.splice(i, 1);
+                break;
+        }
+    }
+    animalData.rabbitData.rabbits.splice(index, 1);
+}
 
 //animal generation and handling functions
 function generateRabbits() {
