@@ -69,13 +69,13 @@ randomizeAnimalsBtn.addEventListener('click', randomizeAnimals);
 
 runSimulationBtn.addEventListener('click', runSimulation);
 
-gridSizeSlider.addEventListener('mouseup', changeGridSize);
+gridSizeSlider.addEventListener('input', changeGridSize);
 
-treeQuantitySlider.addEventListener('mouseup', changeTreeQuantity);
+treeQuantitySlider.addEventListener('input', changeTreeQuantity);
 
-wolfQuantitySlider.addEventListener('mouseup', changeWolfQuantity);
+wolfQuantitySlider.addEventListener('input', changeWolfQuantity);
 
-rabbitQuantitySlider.addEventListener('mouseup', changeRabbitQuantity);
+rabbitQuantitySlider.addEventListener('input', changeRabbitQuantity);
 
 //constructors and classes
 function Animal(id, size, hunger, color, posX, posY) {
