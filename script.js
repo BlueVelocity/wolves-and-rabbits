@@ -8,10 +8,15 @@ const gridSizeSlider = document.getElementById('grid-size-slider');
 const gridSizeText = document.getElementById('grid-size-counter')
 gridSizeText.innerText = gridSizeSlider.value;
 
+const treeQuantitySlider = document.getElementById('tree-quantity-slider');
+const treeQuantityText = document.getElementById('tree-quantity-counter')
+treeQuantityText.innerText = treeQuantitySlider.value;
+
+
 const options = {
     treeGeneration: true,
     gridSize: gridSizeSlider.value,
-    numberOfTrees: 200,
+    numberOfTrees: treeQuantitySlider.value,
     numberOfWolves: 20,
     numberOfRabbits: 100,
     gameSpeed: 250,
@@ -49,6 +54,8 @@ randomizeAnimalsBtn.addEventListener('click', randomizeAnimals);
 runSimulationBtn.addEventListener('click', runSimulation);
 
 gridSizeSlider.addEventListener('mouseup', changeGridSize);
+
+treeQuantitySlider.addEventListener('mouseup', changeTreeQuantity);
 
 //constructors and classes
 function Animal(id, size, hunger, color, posX, posY) {
@@ -388,7 +395,17 @@ function changeGridSize() {
     clearTreeMemory();
     options.gridSize = gridSizeSlider.value;
     gridSizeText.innerText = gridSizeSlider.value
+    treeQuantitySlider.setAttribute('max', `${0.4 * (options.gridSize**2)}`)
+    if (options.numberOfTrees > (0.4 * (options.gridSize**2))) {
+        changeTreeQuantity()
+    }
     constructBoardInDOM();
+}
+
+function changeTreeQuantity() {
+    clearTreeMemory();
+    options.numberOfTrees = treeQuantitySlider.value;
+    treeQuantityText.textContent = `${options.numberOfTrees}`
 }
 
 function disableInputs() {
@@ -397,6 +414,7 @@ function disableInputs() {
     randomizeAnimalsBtn.disabled = true;
     runSimulationBtn.disabled = true;
     gridSizeSlider.disabled = true;
+    treeQuantitySlider.disabled = true;
 }
 
 function enableInputs() {
@@ -405,6 +423,7 @@ function enableInputs() {
     randomizeAnimalsBtn.disabled = false;
     runSimulationBtn.disabled = false;
     gridSizeSlider.disabled = false;
+    treeQuantitySlider.disabled = false;
 }
 
 async function runSimulation() {
