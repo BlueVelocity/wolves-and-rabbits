@@ -108,7 +108,7 @@ body > * {
 }
 
 .game-grid > div > .rabbit-tile {
-    background-color: rgb(184, 184, 184);
+    background-color: rgb(247, 145, 13);
     display: flex;
 }
 
