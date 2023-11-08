@@ -3,17 +3,12 @@ const toggleTreeBtn = document.getElementById('trees-toggle');
 const randomizeTreesBtn = document.getElementById('randomize-trees')
 const randomizeAnimalsBtn = document.getElementById('randomize-animals')
 const runSimulationBtn = document.getElementById('run-simulation');
-
 const gridSizeSlider = document.getElementById('grid-size-slider');
 const gridSizeText = document.getElementById('grid-size-counter')
-gridSizeText.innerText = gridSizeSlider.value;
-
 const treeQuantitySlider = document.getElementById('tree-quantity-slider');
 const treeQuantityText = document.getElementById('tree-quantity-counter')
-
 const wolfQuantitySlider = document.getElementById('wolf-quantity-slider');
 const wolfQuantityText = document.getElementById('wolf-quantity-counter')
-
 const rabbitQuantitySlider = document.getElementById('rabbit-quantity-slider');
 const rabbitQuantityText = document.getElementById('rabbit-quantity-counter')
 
@@ -29,11 +24,11 @@ const options = {
 treeQuantitySlider.setAttribute('max', `${0.3 * (options.gridSize**2)}`)
 wolfQuantitySlider.setAttribute('max', `${0.01 * (options.gridSize**2)}`)
 rabbitQuantitySlider.setAttribute('max', `${0.05 * (options.gridSize**2)}`)
-
 treeQuantitySlider.setAttribute('value', `${(0.3 * (options.gridSize**2))*0.5}`)
 wolfQuantitySlider.setAttribute('value', `${(0.01 * (options.gridSize**2))*0.5}`)
 rabbitQuantitySlider.setAttribute('value', `${(0.05 * (options.gridSize**2))*0.5}`)
 
+gridSizeText.innerText = gridSizeSlider.value;
 treeQuantityText.innerText = treeQuantitySlider.value;
 wolfQuantityText.innerText = wolfQuantitySlider.value;
 rabbitQuantityText.innerText = rabbitQuantitySlider.value;
@@ -62,19 +57,12 @@ constructBoardInDOM()
 
 //Event listeners
 toggleTreeBtn.addEventListener('click', toggleTreeGeneration);
-
 randomizeTreesBtn.addEventListener('click', randomizeTrees);
-
 randomizeAnimalsBtn.addEventListener('click', randomizeAnimals);
-
 runSimulationBtn.addEventListener('click', runSimulation);
-
 gridSizeSlider.addEventListener('input', changeGridSize);
-
 treeQuantitySlider.addEventListener('input', changeTreeQuantity);
-
 wolfQuantitySlider.addEventListener('input', changeWolfQuantity);
-
 rabbitQuantitySlider.addEventListener('input', changeRabbitQuantity);
 
 //constructors and classes
@@ -87,7 +75,6 @@ function Animal(id, size, hunger, color, posX, posY) {
     this.originalCoordinates = [posX, posY];
     this.previouslyTravelledCoordinates = [[posX, posY]];
     this.currentTarget = null;
-
     animalData.animalIdCounter++;
 }
 
@@ -104,8 +91,8 @@ Animal.prototype.eat = function(targetObject) {
 
 Animal.prototype.endChase = function(targetObject) {
     this.move(targetObject.coordinates);
-    this.previouslyTravelledCoordinates = [this.coordinates]
-    this.originalCoordinates = this.coordinates
+    this.previouslyTravelledCoordinates = [this.coordinates];
+    this.originalCoordinates = this.coordinates;
 }
 
 Animal.prototype.move = function(newCoordinate) {
@@ -116,13 +103,13 @@ Animal.prototype.move = function(newCoordinate) {
             arr[index] = newCoordinate;
             
         }
-    })
+    });
 
     boardOccupationData.rabbitOccupation.forEach(function(part, index, arr) {
         if (part[0] === currentCoordinates[0] && part[1] === currentCoordinates[1]) {
             arr[index] = newCoordinate;
         }
-    })
+    });
 }
 
 Animal.prototype.chase = function(targetObject) {
@@ -133,11 +120,13 @@ Animal.prototype.chase = function(targetObject) {
     const calculateFScore = (coordinate) => {
         //g is the total cost of movements until that point calculated using pythagorean theorum
         const calculatePriorMovementCost = () => {
-            return Math.sqrt(((Math.abs(coordinate[0] - this.originalCoordinates[0]))**2) + ((Math.abs(coordinate[1] - this.originalCoordinates[1]))**2));
+            return Math.sqrt(((Math.abs(coordinate[0] - this.originalCoordinates[0]))**2) +
+            ((Math.abs(coordinate[1] - this.originalCoordinates[1]))**2));
         }
         //heuristic is the straight line distance to the target using pythagorean theorum
         const calculateHeuristic = () => {
-            return Math.sqrt(((Math.abs(coordinate[0] - targetObject.coordinates[0]))**2) + ((Math.abs(coordinate[1] - targetObject.coordinates[1]))**2));
+            return Math.sqrt(((Math.abs(coordinate[0] - targetObject.coordinates[0]))**2) +
+            ((Math.abs(coordinate[1] - targetObject.coordinates[1]))**2));
         }
         return calculatePriorMovementCost() + calculateHeuristic();
     }
@@ -170,7 +159,8 @@ Animal.prototype.chase = function(targetObject) {
                     noMovementOptions = false;
                     break
                 } else if (checkIfSpaceIsOccupied(adjacentTiles[i][0], adjacentTiles[i][1])
-                    && !this.previouslyTravelledCoordinates.some(([x, y]) => x === adjacentTiles[i][0] && y === adjacentTiles[i][1])) {
+                    && !this.previouslyTravelledCoordinates.some(([x, y]) => x === adjacentTiles[i][0] &&
+                    y === adjacentTiles[i][1])) {
                     availableSpaces.push(adjacentTiles[i]);
                     this.previouslyTravelledCoordinates.push(this.coordinates);
                 }
@@ -226,7 +216,8 @@ Wolf.prototype.findClosestRabbit = function() {
     let currentClosestRabbit = animalData.rabbitData.rabbits[0];
 
     const calcDistance = (targetObject) => {
-        return Math.sqrt(((Math.abs(this.coordinates[0] - targetObject.coordinates[0]))**2) + ((Math.abs(this.coordinates[1] - targetObject.coordinates[1]))**2))
+        return Math.sqrt(((Math.abs(this.coordinates[0] - targetObject.coordinates[0]))**2) +
+        ((Math.abs(this.coordinates[1] - targetObject.coordinates[1]))**2))
     }
 
     for (let i = 0; i < animalData.rabbitData.rabbits.length -1; i++) {
@@ -249,8 +240,8 @@ Rabbit.prototype.die = function() {
     index = animalData.rabbitData.rabbits.findIndex(x => x.id === this.id);
     console.log(`${this.id} has perished`)
     for (let i = 0; i < boardOccupationData.rabbitOccupation.length; i++) {
-        if (boardOccupationData.rabbitOccupation[i][0] === this.coordinates[0] 
-            && boardOccupationData.rabbitOccupation[i][1] === this.coordinates[1]) {
+        if (boardOccupationData.rabbitOccupation[i][0] === this.coordinates[0] &&
+            boardOccupationData.rabbitOccupation[i][1] === this.coordinates[1]) {
                 boardOccupationData.rabbitOccupation.splice(i, 1);
                 break;
         }
@@ -392,6 +383,7 @@ function constructBoardInDOM() {
                 row.appendChild(emptyTile);
             }
         }
+
         gridContainer.appendChild(row);
     }
 }
@@ -413,6 +405,7 @@ function generateUnoccupiedTiles() {
 function changeGridSize() {
     clearAnimalMemory();
     clearTreeMemory();
+    
     options.gridSize = gridSizeSlider.value;
     gridSizeText.innerText = gridSizeSlider.value
     treeQuantitySlider.setAttribute('max', `${0.3 * (options.gridSize**2)}`)
