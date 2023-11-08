@@ -50,8 +50,8 @@ table {
 /* Defined styles start here */
 
 :root {
-    --main-color: #78350f;
-    --secondary-color: #ea580c;
+    --main-color: #34d399;
+    --secondary-color: #f87171;
     --box-shadow-std: black 5px 5px 10px;
     --game-grid-size: min(60vh, 80vw);
     box-sizing: border-box;
@@ -95,7 +95,7 @@ body > * {
 
 .game-grid > div > div {
     flex: 1;
-    background-color: burlywood;
+    background-color: rgb(253, 231, 203);
     border: black 1px solid;
 }
 
@@ -108,7 +108,7 @@ body > * {
 }
 
 .game-grid > div > .rabbit-tile {
-    background-color: lightgray;
+    background-color: rgb(184, 184, 184);
     display: flex;
 }
 

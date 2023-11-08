@@ -9,7 +9,7 @@ const options = {
     gridSize: 10,
     numberOfTrees: 25,
     numberOfWolves: 1,
-    numberOfRabbits: 1,
+    numberOfRabbits: 5,
 }
 
 const animalData = {
@@ -51,8 +51,7 @@ function Animal(id, size, hunger, color, posX, posY) {
     this.color = color;
     this.coordinates = [posX, posY];
     this.originalCoordinates = [posX, posY];
-    this.previousCoordinates = [[posX, posY]];
-    this.previousCalculatedCoordinates = [[posX, posY]];
+    this.previouslyTravelledCoordinates = [[posX, posY]];
     this.currentTarget = null;
 
     animalData.animalIdCounter++;
@@ -71,13 +70,13 @@ Animal.prototype.eat = function(targetObject) {
 
 Animal.prototype.endChase = function(targetObject) {
     this.move(targetObject.coordinates);
-    this.previousCoordinates = [this.coordinates];
-    this.previousCalculatedCoordinates = [this.coordinates];
+    this.previouslyTravelledCoordinates = [this.coordinates]
+    this.originalCoordinates = this.coordinates
 }
 
 Animal.prototype.move = function(newCoordinate) {
     const currentCoordinates = this.coordinates;
-    this.coordinates = newCoordinate;
+    this.coordinates = newCoordinate;  
     boardOccupationData.wolfOccupation.forEach(function(part, index, arr) {
         if (part[0] === currentCoordinates[0] && part[1] === currentCoordinates[1]) {
             arr[index] = newCoordinate;
@@ -137,9 +136,9 @@ Animal.prototype.chase = function(targetObject) {
                     noMovementOptions = false;
                     break
                 } else if (checkIfSpaceIsOccupied(adjacentTiles[i][0], adjacentTiles[i][1])
-                    && !this.previousCalculatedCoordinates.some(([x, y]) => x === adjacentTiles[i][0] && y === adjacentTiles[i][1])) {
+                    && !this.previouslyTravelledCoordinates.some(([x, y]) => x === adjacentTiles[i][0] && y === adjacentTiles[i][1])) {
                     availableSpaces.push(adjacentTiles[i]);
-                    this.previousCalculatedCoordinates.push(adjacentTiles[i]);
+                    this.previouslyTravelledCoordinates.push(this.coordinates);
                 }
             }
 
@@ -149,7 +148,8 @@ Animal.prototype.chase = function(targetObject) {
                 });
                 noMovementOptions = false;
             } else {
-                this.previousCalculatedCoordinates = [this.coordinates]
+                this.previouslyTravelledCoordinates = [this.coordinates]
+                this.originalCoordinates = this.coordinates
             }
         }
 
