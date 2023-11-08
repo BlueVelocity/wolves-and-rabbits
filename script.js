@@ -8,8 +8,9 @@ const options = {
     treeGeneration: true,
     gridSize: 10,
     numberOfTrees: 25,
-    numberOfWolves: 1,
+    numberOfWolves: 2,
     numberOfRabbits: 5,
+    gameSpeed: 250,
 }
 
 const animalData = {
@@ -187,6 +188,22 @@ function Wolf(posX, posY) {
 }
 
 Object.setPrototypeOf(Wolf.prototype, Animal.prototype);
+
+Wolf.prototype.findClosestRabbit = function() {
+    let currentClosestRabbit = animalData.rabbitData.rabbits[0];
+
+    const calcDistance = (targetObject) => {
+        return Math.sqrt(((Math.abs(this.coordinates[0] - targetObject.coordinates[0]))**2) + ((Math.abs(this.coordinates[1] - targetObject.coordinates[1]))**2))
+    }
+
+    for (let i = 0; i < animalData.rabbitData.rabbits.length -1; i++) {
+        if (calcDistance(currentClosestRabbit) > calcDistance(animalData.rabbitData.rabbits[(i + 1)])) {
+            currentClosestRabbit = animalData.rabbitData.rabbits[(i + 1)]
+        }
+    }
+
+    return currentClosestRabbit
+}
 
 function Rabbit(posX, posY) {
     const color = animalData.rabbitData.colors[(randomInt(0, (animalData.rabbitData.colors.length - 1)))]
@@ -377,8 +394,10 @@ function enableButtons() {
 async function runSimulation() {
     disableButtons();
     while (animalData.rabbitData.rabbits.length !== 0 && animalData.wolfData.wolves.length !== 0) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        animalData.wolfData.wolves[0].chase(animalData.rabbitData.rabbits[0]);
+        await new Promise(resolve => setTimeout(resolve, options.gameSpeed));
+        animalData.wolfData.wolves.forEach( function(part, index, arr) {
+            part.chase(part.findClosestRabbit())
+        })
         constructBoardInDOM();
     }
     enableButtons();
