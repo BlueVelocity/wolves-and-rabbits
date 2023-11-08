@@ -10,17 +10,33 @@ gridSizeText.innerText = gridSizeSlider.value;
 
 const treeQuantitySlider = document.getElementById('tree-quantity-slider');
 const treeQuantityText = document.getElementById('tree-quantity-counter')
-treeQuantityText.innerText = treeQuantitySlider.value;
 
+const wolfQuantitySlider = document.getElementById('wolf-quantity-slider');
+const wolfQuantityText = document.getElementById('wolf-quantity-counter')
+
+const rabbitQuantitySlider = document.getElementById('rabbit-quantity-slider');
+const rabbitQuantityText = document.getElementById('rabbit-quantity-counter')
 
 const options = {
     treeGeneration: true,
     gridSize: gridSizeSlider.value,
     numberOfTrees: treeQuantitySlider.value,
-    numberOfWolves: 20,
-    numberOfRabbits: 100,
+    numberOfWolves: wolfQuantitySlider.value,
+    numberOfRabbits: rabbitQuantitySlider.value,
     gameSpeed: 250,
 }
+
+treeQuantitySlider.setAttribute('max', `${0.3 * (options.gridSize**2)}`)
+wolfQuantitySlider.setAttribute('max', `${0.01 * (options.gridSize**2)}`)
+rabbitQuantitySlider.setAttribute('max', `${0.05 * (options.gridSize**2)}`)
+
+treeQuantitySlider.setAttribute('value', `${(0.3 * (options.gridSize**2))*0.5}`)
+wolfQuantitySlider.setAttribute('value', `${(0.01 * (options.gridSize**2))*0.5}`)
+rabbitQuantitySlider.setAttribute('value', `${(0.05 * (options.gridSize**2))*0.5}`)
+
+treeQuantityText.innerText = treeQuantitySlider.value;
+wolfQuantityText.innerText = wolfQuantitySlider.value;
+rabbitQuantityText.innerText = rabbitQuantitySlider.value;
 
 const animalData = {
     animalIdCounter: 1,
@@ -56,6 +72,10 @@ runSimulationBtn.addEventListener('click', runSimulation);
 gridSizeSlider.addEventListener('mouseup', changeGridSize);
 
 treeQuantitySlider.addEventListener('mouseup', changeTreeQuantity);
+
+wolfQuantitySlider.addEventListener('mouseup', changeWolfQuantity);
+
+rabbitQuantitySlider.addEventListener('mouseup', changeRabbitQuantity);
 
 //constructors and classes
 function Animal(id, size, hunger, color, posX, posY) {
@@ -395,17 +415,29 @@ function changeGridSize() {
     clearTreeMemory();
     options.gridSize = gridSizeSlider.value;
     gridSizeText.innerText = gridSizeSlider.value
-    treeQuantitySlider.setAttribute('max', `${0.4 * (options.gridSize**2)}`)
-    if (options.numberOfTrees > (0.4 * (options.gridSize**2))) {
-        changeTreeQuantity()
-    }
+    treeQuantitySlider.setAttribute('max', `${0.3 * (options.gridSize**2)}`)
+    wolfQuantitySlider.setAttribute('max', `${0.01 * (options.gridSize**2)}`)
+    rabbitQuantitySlider.setAttribute('max', `${0.05 * (options.gridSize**2)}`)
+
+    changeTreeQuantity();
+    changeWolfQuantity();
+    changeRabbitQuantity();
     constructBoardInDOM();
 }
 
 function changeTreeQuantity() {
-    clearTreeMemory();
     options.numberOfTrees = treeQuantitySlider.value;
     treeQuantityText.textContent = `${options.numberOfTrees}`
+}
+
+function changeWolfQuantity() {
+    options.numberOfWolves = wolfQuantitySlider.value;
+    wolfQuantityText.textContent = `${options.numberOfWolves}`
+}
+
+function changeRabbitQuantity() {
+    options.numberOfRabbits = rabbitQuantitySlider.value;
+    rabbitQuantityText.textContent = `${options.numberOfRabbits}`
 }
 
 function disableInputs() {
@@ -415,6 +447,8 @@ function disableInputs() {
     runSimulationBtn.disabled = true;
     gridSizeSlider.disabled = true;
     treeQuantitySlider.disabled = true;
+    wolfQuantitySlider.disabled = true;
+    rabbitQuantitySlider.disabled = true;
 }
 
 function enableInputs() {
@@ -424,6 +458,8 @@ function enableInputs() {
     runSimulationBtn.disabled = false;
     gridSizeSlider.disabled = false;
     treeQuantitySlider.disabled = false;
+    wolfQuantitySlider.disabled = false;
+    rabbitQuantitySlider.disabled = false;
 }
 
 async function runSimulation() {
