@@ -6,10 +6,10 @@ const runSimulationBtn = document.getElementById('run-simulation');
 
 const options = {
     treeGeneration: true,
-    gridSize: 5,
+    gridSize: 8,
     numberOfTrees: 8,
     numberOfWolves: 1,
-    numberOfRabbits: 4,
+    numberOfRabbits: 1,
 }
 
 const animalData = {
@@ -64,64 +64,55 @@ Animal.prototype.information = function() {
 
 Animal.prototype.eat = function(targetObject) {
     console.log(`${this.id} just ate ${targetObject.id}!`)
-    this.endChase();
+    this.endChase(targetObject);
     targetObject.die();
 }
 
-Animal.prototype.endChase = function() {
-    this.originalCoordinates = this.coordinates;
-    this.previousCalculatedCoordinates = [this.coordinates];
+Animal.prototype.endChase = function(targetObject) {
+    this.move(targetObject.coordinates)
+    this.previousCalculatedCoordinates = [this.coordinates]
+}
+
+Animal.prototype.move = function(newCoordinate) {
+    const currentCoordinates = this.coordinates
+    this.coordinates = newCoordinate
+    boardOccupationData.wolfOccupation.forEach(function(part, index, arr) {
+        if (part[0] === currentCoordinates[0] && part[1] === currentCoordinates[1]) {
+            arr[index] = newCoordinate;
+            
+        }
+    })
+
+    boardOccupationData.rabbitOccupation.forEach(function(part, index, arr) {
+        if (part[0] === currentCoordinates[0] && part[1] === currentCoordinates[1]) {
+            arr[index] = newCoordinate;
+        }
+    })
 }
 
 Animal.prototype.chase = function(targetObject) {
     //f(n) = g(n) + h(n)
     //f(n) is total estimated cost of path through node n
     //g(n) is cost so far to reach node n  
-    //h(n) is estimated cost from n to goal. Use Manhattan Distance Heuristic
-
-    let targetCoordinates = targetObject.coordinates;
-    const startingCoordinates = this.originalCoordinates;
-    const previousCoordinates = this.coordinates;
-    
-
-
-    const updateLocation = (currentCoordinate) => {
-        bestTile = calculateNextBestTile(currentCoordinate);
-        this.coordinates = bestTile;
-
-        boardOccupationData.wolfOccupation.forEach(function(part, index, arr) {
-            if (part[0] === previousCoordinates[0] && part[1] === previousCoordinates[1]) {
-                arr[index] = bestTile;
-            }
-        })
-
-        boardOccupationData.rabbitOccupation.forEach(function(part, index, arr) {
-            if (part[0] === previousCoordinates[0] && part[1] === previousCoordinates[1]) {
-                arr[index] = bestTile;
-            }
-        })
-    }
-
-    const calculateNextBestTile = (currentCoordinate) => {
-        let validTilesWithFValues = calculateValidAdjacentTiles(currentCoordinate);
-        if (validTilesWithFValues.length === 0) {
-            this.previousCalculatedCoordinates = []
-            validTilesWithFValues = calculateValidAdjacentTiles(currentCoordinate)
+    //h(n) is estimated cost from n to goal. Use Manhattan Distance Heuristic 
+    const calculateFScore = (coordinate) => {
+        //g is the total cost of movements until that point calculated using pythagorean theorum
+        const calculatePriorMovementCost = () => {
+            return Math.sqrt(((Math.abs(coordinate[0] - this.originalCoordinates[0]))**2) + ((Math.abs(coordinate[1] - this.originalCoordinates[1]))**2));
         }
-        let closestTile = validTilesWithFValues[0];
-        for (let i = 0; i < validTilesWithFValues.length; i++) {
-            if (validTilesWithFValues[i][1] < closestTile[1]) {
-                closestTile = validTilesWithFValues[i];
-            }
+
+        //heuristic is the straight line distance to the target using pythagorean theorum
+        const calculateHeuristic = () => {
+            return Math.sqrt(((Math.abs(coordinate[0] - targetObject.coordinates[0]))**2) + ((Math.abs(coordinate[1] - targetObject.coordinates[1]))**2));
         }
-        return closestTile[0];
+        return calculatePriorMovementCost() + calculateHeuristic();
     }
 
     repeatCounter = 0
     const calculateValidAdjacentTiles = (coordinates) => {
         repeatCounter++
         if (repeatCounter > 2) {
-            throw Error
+            throw Error('This turned into spaghetti')
         }
 
         upLeft = [(coordinates[0] - 1), (coordinates[1] + 1)];
@@ -138,9 +129,8 @@ Animal.prototype.chase = function(targetObject) {
 
         for (let i = 0; i < adjacentTiles.length; i++) {
             if (checkIfAdjacentTileIsTarget(adjacentTiles[i][0], adjacentTiles[i][1])) {
-                availableSpaces = [];
-                availableSpaces.push(adjacentTiles[i]);
                 this.eat(targetObject);
+                availableSpaces = [adjacentTiles[i]];
                 break
             } else if (checkIfSpaceIsOccupied(adjacentTiles[i][0], adjacentTiles[i][1])
                 && !this.previousCalculatedCoordinates.some(([x, y]) => x === adjacentTiles[i][0] && y === adjacentTiles[i][1])) {
@@ -156,24 +146,29 @@ Animal.prototype.chase = function(targetObject) {
         return availableSpaces;
     }
 
+    const calculateNextBestTile = (currentCoordinate) => {
+        let validTilesWithFValues = calculateValidAdjacentTiles(currentCoordinate);
+        let closestTile = validTilesWithFValues[0];
+        for (let i = 0; i < validTilesWithFValues.length; i++) {
+            if (validTilesWithFValues[i][1] < closestTile[1]) {
+                closestTile = validTilesWithFValues[i];
+            }
+        }
+        return closestTile;
+    }
+
+    const updateLocation = (currentCoordinate) => {
+        nextBestTile = calculateNextBestTile(currentCoordinate);
+        this.move(nextBestTile[0])        
+    }
+
     function checkIfAdjacentTileIsTarget(numX, numY) {
-        if (numX === targetCoordinates[0] && numY == targetCoordinates[1]) {
+        if (numX === targetObject.coordinates[0] && numY == targetObject.coordinates[1]) {
             return true;
         }
     }
 
-    function calculateFScore(coordinate) {
-        //g is the total cost of movements until that point calculated using pythagorean theorum
-        function calculatePriorMovementCost() {
-            return Math.sqrt(((Math.abs(coordinate[0] - startingCoordinates[0]))**2) + ((Math.abs(coordinate[1] - startingCoordinates[1]))**2));
-        }
-
-        //heuristic is the straight line distance to the target using pythagorean theorum
-        function calculateHeuristic() {
-            return Math.sqrt(((Math.abs(coordinate[0] - targetCoordinates[0]))**2) + ((Math.abs(coordinate[1] - targetCoordinates[1]))**2));
-        }
-        return calculatePriorMovementCost() + calculateHeuristic();
-    }
+    
 
     updateLocation(this.coordinates)
 }
@@ -319,32 +314,23 @@ function constructBoardInDOM() {
 
     clearBoardInDOM();
 
-    function assignCoordinates(tile, x, y) {
-        tile.setAttribute('data-coordinate-x', `${x}`);
-        tile.setAttribute('data-coordinate-y', `${y}`);
-    }
-
     for (let y = 0; y < options.gridSize; y++) {
         row = document.createElement('div');
         for (let x = 0; x < options.gridSize; x++) {
             if (boardOccupationData.treeOccupation.some(([treeX, treeY]) => treeX === x && treeY === y) && options.treeGeneration) {
                 let treeTile = document.createElement('div');
                 treeTile.setAttribute('class', 'tree-tile');
-                assignCoordinates(treeTile, x, y);
                 row.appendChild(treeTile);
             } else if (boardOccupationData.wolfOccupation.some(([wolfX, wolfY]) => wolfX === x && wolfY === y)) {    
                 let wolfTile = document.createElement('div');
                 wolfTile.setAttribute('class', 'wolf-tile');
-                assignCoordinates(wolfTile, x, y);
                 row.appendChild(wolfTile);
             } else if (boardOccupationData.rabbitOccupation.some(([rabbitX, rabbitY]) => rabbitX === x && rabbitY === y)) {    
                 let rabbitTile = document.createElement('div');
                 rabbitTile.setAttribute('class', 'rabbit-tile');
-                assignCoordinates(rabbitTile, x, y);
                 row.appendChild(rabbitTile);
             } else {
                 let emptyTile = document.createElement('div');
-                assignCoordinates(emptyTile, x, y);
                 row.appendChild(emptyTile);
             }
         }
