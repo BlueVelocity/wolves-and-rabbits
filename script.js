@@ -4,12 +4,16 @@ const randomizeTreesBtn = document.getElementById('randomize-trees')
 const randomizeAnimalsBtn = document.getElementById('randomize-animals')
 const runSimulationBtn = document.getElementById('run-simulation');
 
+const gridSizeSlider = document.getElementById('grid-size-slider');
+const gridSizeText = document.getElementById('grid-size-counter')
+gridSizeText.innerText = gridSizeSlider.value;
+
 const options = {
     treeGeneration: true,
-    gridSize: 10,
-    numberOfTrees: 25,
-    numberOfWolves: 2,
-    numberOfRabbits: 5,
+    gridSize: gridSizeSlider.value,
+    numberOfTrees: 200,
+    numberOfWolves: 20,
+    numberOfRabbits: 100,
     gameSpeed: 250,
 }
 
@@ -43,6 +47,8 @@ randomizeTreesBtn.addEventListener('click', randomizeTrees);
 randomizeAnimalsBtn.addEventListener('click', randomizeAnimals);
 
 runSimulationBtn.addEventListener('click', runSimulation);
+
+gridSizeSlider.addEventListener('mouseup', changeGridSize);
 
 //constructors and classes
 function Animal(id, size, hunger, color, posX, posY) {
@@ -377,22 +383,32 @@ function generateUnoccupiedTiles() {
     }
 }
 
-function disableButtons() {
+function changeGridSize() {
+    clearAnimalMemory();
+    clearTreeMemory();
+    options.gridSize = gridSizeSlider.value;
+    gridSizeText.innerText = gridSizeSlider.value
+    constructBoardInDOM();
+}
+
+function disableInputs() {
     toggleTreeBtn.disabled = true;
     randomizeTreesBtn.disabled = true;
     randomizeAnimalsBtn.disabled = true;
-    runSimulationBtn .disabled = true;
+    runSimulationBtn.disabled = true;
+    gridSizeSlider.disabled = true;
 }
 
-function enableButtons() {
+function enableInputs() {
     toggleTreeBtn.disabled = false;
     randomizeTreesBtn.disabled = false;
     randomizeAnimalsBtn.disabled = false;
-    runSimulationBtn .disabled = false;
+    runSimulationBtn.disabled = false;
+    gridSizeSlider.disabled = false;
 }
 
 async function runSimulation() {
-    disableButtons();
+    disableInputs();
     while (animalData.rabbitData.rabbits.length !== 0 && animalData.wolfData.wolves.length !== 0) {
         await new Promise(resolve => setTimeout(resolve, options.gameSpeed));
         animalData.wolfData.wolves.forEach( function(part, index, arr) {
@@ -400,5 +416,5 @@ async function runSimulation() {
         })
         constructBoardInDOM();
     }
-    enableButtons();
+    enableInputs();
 }

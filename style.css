@@ -96,7 +96,7 @@ body > * {
 .game-grid > div > div {
     flex: 1;
     background-color: rgb(253, 231, 203);
-    border: black 1px solid;
+    border: solid black 0.5px;
 }
 
 .game-grid > div > .tree-tile {
@@ -124,4 +124,13 @@ body > * {
     background-color: var(--main-color);
     border-radius: 10px;
     padding: 5px;
+}
+
+.grid-size-adjustment,
+.tree-quantity-adjustment {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--secondary-color);
+    border-radius: 10px;
 }
