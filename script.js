@@ -207,7 +207,7 @@ Animal.prototype.chase = function(targetObject) {
     }
 
     function checkIfAdjacentTileIsTarget(numX, numY) {
-        if (numX === targetObject.coordinates[0] && numY == targetObject.coordinates[1]) {
+        if (numX === targetObject.coordinates[0] && numY === targetObject.coordinates[1]) {
             return true;
         }
     }
@@ -466,8 +466,10 @@ async function runSimulation() {
     disableInputs();
     while (animalData.rabbitData.rabbits.length !== 0 && animalData.wolfData.wolves.length !== 0) {
         await new Promise(resolve => setTimeout(resolve, options.gameSpeed));
-        animalData.wolfData.wolves.forEach( function(part, index, arr) {
-            part.chase(part.findClosestRabbit())
+        animalData.wolfData.wolves.forEach( function(part) {
+            if (animalData.rabbitData.rabbits.length !== 0){
+                part.chase(part.findClosestRabbit());
+            }
         })
         constructBoardInDOM();
     }
