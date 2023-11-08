@@ -6,8 +6,8 @@ const runSimulationBtn = document.getElementById('run-simulation');
 
 const options = {
     treeGeneration: true,
-    gridSize: 8,
-    numberOfTrees: 8,
+    gridSize: 10,
+    numberOfTrees: 25,
     numberOfWolves: 1,
     numberOfRabbits: 1,
 }
@@ -51,6 +51,7 @@ function Animal(id, size, hunger, color, posX, posY) {
     this.color = color;
     this.coordinates = [posX, posY];
     this.originalCoordinates = [posX, posY];
+    this.previousCoordinates = [[posX, posY]];
     this.previousCalculatedCoordinates = [[posX, posY]];
     this.currentTarget = null;
 
@@ -69,13 +70,14 @@ Animal.prototype.eat = function(targetObject) {
 }
 
 Animal.prototype.endChase = function(targetObject) {
-    this.move(targetObject.coordinates)
-    this.previousCalculatedCoordinates = [this.coordinates]
+    this.move(targetObject.coordinates);
+    this.previousCoordinates = [this.coordinates];
+    this.previousCalculatedCoordinates = [this.coordinates];
 }
 
 Animal.prototype.move = function(newCoordinate) {
-    const currentCoordinates = this.coordinates
-    this.coordinates = newCoordinate
+    const currentCoordinates = this.coordinates;
+    this.coordinates = newCoordinate;
     boardOccupationData.wolfOccupation.forEach(function(part, index, arr) {
         if (part[0] === currentCoordinates[0] && part[1] === currentCoordinates[1]) {
             arr[index] = newCoordinate;
@@ -100,7 +102,6 @@ Animal.prototype.chase = function(targetObject) {
         const calculatePriorMovementCost = () => {
             return Math.sqrt(((Math.abs(coordinate[0] - this.originalCoordinates[0]))**2) + ((Math.abs(coordinate[1] - this.originalCoordinates[1]))**2));
         }
-
         //heuristic is the straight line distance to the target using pythagorean theorum
         const calculateHeuristic = () => {
             return Math.sqrt(((Math.abs(coordinate[0] - targetObject.coordinates[0]))**2) + ((Math.abs(coordinate[1] - targetObject.coordinates[1]))**2));
@@ -127,21 +128,30 @@ Animal.prototype.chase = function(targetObject) {
         let adjacentTiles = [upLeft, upMiddle, upRight, left, right, downLeft, downMiddle, downRight];
         let availableSpaces = [];
 
-        for (let i = 0; i < adjacentTiles.length; i++) {
-            if (checkIfAdjacentTileIsTarget(adjacentTiles[i][0], adjacentTiles[i][1])) {
-                this.eat(targetObject);
-                availableSpaces = [adjacentTiles[i]];
-                break
-            } else if (checkIfSpaceIsOccupied(adjacentTiles[i][0], adjacentTiles[i][1])
-                && !this.previousCalculatedCoordinates.some(([x, y]) => x === adjacentTiles[i][0] && y === adjacentTiles[i][1])) {
-                availableSpaces.push(adjacentTiles[i]);
-                this.previousCalculatedCoordinates.push(adjacentTiles[i]);
+        let noMovementOptions = true;
+        while (noMovementOptions === true) {
+            for (let i = 0; i < adjacentTiles.length; i++) {
+                if (checkIfAdjacentTileIsTarget(adjacentTiles[i][0], adjacentTiles[i][1])) {
+                    this.eat(targetObject);
+                    availableSpaces = [adjacentTiles[i]];
+                    noMovementOptions = false;
+                    break
+                } else if (checkIfSpaceIsOccupied(adjacentTiles[i][0], adjacentTiles[i][1])
+                    && !this.previousCalculatedCoordinates.some(([x, y]) => x === adjacentTiles[i][0] && y === adjacentTiles[i][1])) {
+                    availableSpaces.push(adjacentTiles[i]);
+                    this.previousCalculatedCoordinates.push(adjacentTiles[i]);
+                }
+            }
+
+            if (availableSpaces.length != 0) {
+                availableSpaces.forEach(function(part, index, array) {
+                    array[index] = [part, calculateFScore(part)];
+                });
+                noMovementOptions = false;
+            } else {
+                this.previousCalculatedCoordinates = [this.coordinates]
             }
         }
-
-        availableSpaces.forEach(function(part, index, array) {
-            array[index] = [part, calculateFScore(part)];
-        });
 
         return availableSpaces;
     }
@@ -167,8 +177,6 @@ Animal.prototype.chase = function(targetObject) {
             return true;
         }
     }
-
-    
 
     updateLocation(this.coordinates)
 }
