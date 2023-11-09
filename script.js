@@ -21,12 +21,12 @@ const options = {
     gameSpeed: 250,
 }
 
-treeQuantitySlider.setAttribute('max', `${0.3 * (options.gridSize**2)}`)
-wolfQuantitySlider.setAttribute('max', `${0.01 * (options.gridSize**2)}`)
-rabbitQuantitySlider.setAttribute('max', `${0.05 * (options.gridSize**2)}`)
-treeQuantitySlider.setAttribute('value', `${(0.3 * (options.gridSize**2))*0.5}`)
-wolfQuantitySlider.setAttribute('value', `${(0.01 * (options.gridSize**2))*0.5}`)
-rabbitQuantitySlider.setAttribute('value', `${(0.05 * (options.gridSize**2))*0.5}`)
+treeQuantitySlider.setAttribute('max', `${Math.round(0.3 * (options.gridSize**2))}`)
+wolfQuantitySlider.setAttribute('max', `${Math.round(0.01 * (options.gridSize**2))}`)
+rabbitQuantitySlider.setAttribute('max', `${Math.round(0.05 * (options.gridSize**2))}`)
+treeQuantitySlider.setAttribute('value', `${Math.round((0.3 * (options.gridSize**2))*0.5)}`)
+wolfQuantitySlider.setAttribute('value', `${Math.round((0.01 * (options.gridSize**2))*0.5)}`)
+rabbitQuantitySlider.setAttribute('value', `${Math.round((0.05 * (options.gridSize**2))*0.5)}`)
 
 gridSizeText.innerText = gridSizeSlider.value;
 treeQuantityText.innerText = treeQuantitySlider.value;
@@ -405,12 +405,9 @@ function generateUnoccupiedTiles() {
 function changeGridSize() {
     clearAnimalMemory();
     clearTreeMemory();
-    
+
     options.gridSize = gridSizeSlider.value;
     gridSizeText.innerText = gridSizeSlider.value
-    treeQuantitySlider.setAttribute('max', `${0.3 * (options.gridSize**2)}`)
-    wolfQuantitySlider.setAttribute('max', `${0.01 * (options.gridSize**2)}`)
-    rabbitQuantitySlider.setAttribute('max', `${0.05 * (options.gridSize**2)}`)
 
     changeTreeQuantity();
     changeWolfQuantity();
@@ -419,16 +416,34 @@ function changeGridSize() {
 }
 
 function changeTreeQuantity() {
+    let value = Math.round(0.3 * (options.gridSize**2));
+    if (value > 1) {
+        treeQuantitySlider.setAttribute('max', `${value}`)
+    } else {
+        treeQuantitySlider.setAttribute('max', `1`)
+    }
     options.numberOfTrees = treeQuantitySlider.value;
     treeQuantityText.textContent = `${options.numberOfTrees}`
 }
 
 function changeWolfQuantity() {
+    let value = Math.round(0.01 * (options.gridSize**2));
+    if (value > 1) {
+        wolfQuantitySlider.setAttribute('max', `${value}`)
+    } else {
+        wolfQuantitySlider.setAttribute('max', `1`)
+    }
     options.numberOfWolves = wolfQuantitySlider.value;
     wolfQuantityText.textContent = `${options.numberOfWolves}`
 }
 
 function changeRabbitQuantity() {
+    let value = Math.round(0.05 * (options.gridSize**2));
+    if (value > 1) {
+        rabbitQuantitySlider.setAttribute('max', `${value}`)
+    } else {
+        rabbitQuantitySlider.setAttribute('max', `1`)
+    }
     options.numberOfRabbits = rabbitQuantitySlider.value;
     rabbitQuantityText.textContent = `${options.numberOfRabbits}`
 }
