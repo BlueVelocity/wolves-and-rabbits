@@ -85,6 +85,6 @@ animal movement.
 ## Lessons Learned:  
   
 Setting out on this project, the initial purpose was to cement the concept of  
-prototypal inheritence, though the scope of the project overeached that goal. 
+prototypal inheritence, though the scope of the project overeached that goal.  
 Instead, the project cemented a number of previously learned ideas along  
 with some new lessons in algorithms (A*) and code stucture.  
