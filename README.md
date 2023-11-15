@@ -29,15 +29,15 @@ user-agent and the application. The JavaScript starts out by declaring the
 variables to capture the DOM elements to be used throughout the project.  
 Objects containing the variables representing user options and data storage  
 are then instantiated. These values will update dynamically as the user-agent  
-manpulates data defining the simulation. The board is constructed to the  
+manipulates data defining the simulation. The board is constructed to the  
 predefined variables and control is then handed to the user-agent.
 
 When the sliders and buttons are manipulated, the board size updates as each  
-value is updated. Three values can be manipulated: the quantity of trees,  
+value is updated. Three values can be manipulated: the quantity of "trees",  
 the quantity of "wolves", and the quantity of "rabbits", the limits of each  
 being defined as a ratio of board size, this is to prevent crashing and  
 visual clutter. The program can only be run if there are both "wolf" and  
-"rabbit" objects represented within the simulation. Randomizing the animals  
+"rabbit" objects present within the simulation. Randomizing the "animals"  
 will instantiate "wolf" or "rabbit" objects using the "Wolf" and "Rabbit"  
 constructors respectively, inheriting functions and properties through  
 prototypal inheritence from the "Animal" prototype. Upon running the  
@@ -61,26 +61,26 @@ controls are re-enabled.
 ## Optimizations
 
 Currently there are no performance issues that can be seen on modern machines,  
-though this is artificially limited by the limit set on the maximum grid size.  
-during testing allowing too many "wolves" or allowing the grid size to get  
+though this is artificially controlled by the limit set on the maximum grid size.  
+During testing, allowing too many "wolves" or allowing the grid size to get  
 too large posed a significant drag on performance.  
   
 Optimizations can be made to the A* algorithm to calculate the optimal path  
 prior to animal movement, though this was avoided as the more dynamic nature  
 of the implemented solution allows for real time simulation with analysis  
 of other tile states in real time. Though, this solution could be explored to  
-reduce the usage of client side resources needed to update the DO through every  
+reduce the usage of client side resources needed to update the DOM through every  
 clock cycle.  
   
 Optimizations to how the DOM is updated could also be implemented by selecting  
-and updating only the tiles inhabited by the wolves and the adjacent tile that  
+and updating only the tiles inhabited by the "wolves" and the adjacent tile that  
 will be inhabited. This could be accomplished by assigning id values to each  
-"tile" corresponding the animals next move with said tile in the DOM, only  
+tile corresponding the animals next move with said tile in the DOM, only  
 updating the required tile.  
   
-Further optimization for code readability could also occur by restructuring  
-the code into distinct handlers of the updating the DOM, animal creation, and  
-animal movement.  
+Further optimization for code readability could also be implemented by  
+restructuring the code into distinct handlers of the updating the DOM,  
+"animal" creation, and "animal" movement.  
   
 ## Lessons Learned:  
   
