@@ -96,7 +96,6 @@ body > * {
 .game-grid > div > div {
     flex: 1;
     background-color: rgb(252, 239, 223);
-    border: solid black 1px;
 }
 
 .game-grid > div > .tree-tile {
